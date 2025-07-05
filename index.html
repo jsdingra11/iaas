@@ -88,7 +88,47 @@
         gap: 20px;
       }
     }
+    .xp-marquee-container {
+      width: 100%;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-bottom: 2px solid #000000;
+      border-right: 2px solid #000000;
+      box-shadow: inset 1px 1px #ffffff, inset -1px -1px #808080;
+      padding: 5px;
+      position: fixed;
+      top: 0;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .xp-marquee-text {
+      display: inline-block;
+      white-space: nowrap;
+      color: #000080;
+      font-weight: bold;
+      font-size: 14px;
+      animation: scroll-left 20s linear infinite;
+    }
+
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
   </style>
+</head>
+<body>
+
+  <div class="xp-marquee-container">
+    <div class="xp-marquee-text">  
+      🚫 This is not a Google Form – it’s specially made for <b>IAAS Adventure</b> by <b>Jashanpreet Singh</b> 💻
+    </div>
+  </div>
 
   <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
