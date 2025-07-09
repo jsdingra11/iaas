@@ -2,13 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Windows XP Form</title>
+  <title>IAAS 2025 - LinkedIn</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       background: #ffffff;
       font-family: Tahoma, sans-serif;
@@ -88,6 +85,7 @@
         gap: 20px;
       }
     }
+
     .xp-marquee-container {
       width: 100%;
       background-color: #c0c0c0;
@@ -113,40 +111,36 @@
     }
 
     @keyframes scroll-left {
-      0% {
-        transform: translateX(100%);
-      }
-      100% {
-        transform: translateX(-100%);
-      }
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
     }
   </style>
 </head>
 <body>
 
-  <div class="xp-marquee-container">
+  <!--<div class="xp-marquee-container">
     <div class="xp-marquee-text">  
       🚫 This is not a Google Form – it’s specially made for <b>IAAS Adventure</b> by <b>Jashanpreet Singh</b> 💻
       Subscribe to B. PAIN Music on Youtube 😘 
     </div>
-  </div>
-<br>
-  <br>
-  
+  </div>-->
+
+  <br><br>
+
   <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-</head>
-<body>
 
   <div class="window">
-    <div class="title-bar">IAAS, IIST - Weekand Adventure (6th July, 2025)</div>
+    <div class="title-bar">IAAS, IIST - 2025 - LinkedIn</div>
     <div class="window-body">
       <form id="submitForm">
         <label for="name">Name:</label>
         <input type="text" id="name" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" required>
+
+        <label for="linkedin">LinkedIn Profile URL:</label>
+        <input type="url" id="linkedin" placeholder="https://www.linkedin.com/in/yourname" required>
+
         <button type="submit">Submit</button>
         <div id="message"></div>
       </form>
@@ -154,7 +148,7 @@
   </div>
 
   <div class="window">
-    <div class="title-bar">Submitted Users</div>
+    <div class="title-bar">Submitted Profiles</div>
     <div class="window-body">
       <ul id="userList"></ul>
       <button onclick="downloadAll()">Download All (.txt)</button>
@@ -162,7 +156,6 @@
   </div>
 
   <script>
-    // ✅ Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyB4eoofAdY4DrW-VKvfGJl5aNv2hoCTn4c",
       authDomain: "iist-fd6e8.firebaseapp.com",
@@ -173,29 +166,27 @@
       appId: "1:692699808449:web:120c8941a940d071f24a40"
     };
 
-    // ✅ Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database().ref("entries");
+    const db = firebase.database().ref("linkedin_profiles");
 
     const form = document.getElementById("submitForm");
     const message = document.getElementById("message");
     const userList = document.getElementById("userList");
 
-    // ✅ Form Submission
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
+      const linkedin = document.getElementById("linkedin").value.trim();
 
-      if (!name || !email) {
+      if (!name || !linkedin) {
         message.style.color = "red";
-        message.textContent = "Please fill in both fields.";
+        message.textContent = "Please fill in all fields.";
         return;
       }
 
       const entry = {
         name,
-        email,
+        linkedin,
         timestamp: new Date().toISOString()
       };
 
@@ -208,41 +199,38 @@
       } catch (error) {
         console.error("Error saving to database:", error);
         message.style.color = "red";
-        message.textContent = "❌ Submission failed. Check console.";
+        message.textContent = "❌ Submission failed.";
       }
     });
 
-    // ✅ Load All Entries
     function loadUsers() {
       userList.innerHTML = "";
       db.once("value", (snapshot) => {
         snapshot.forEach((child) => {
           const data = child.val();
           const li = document.createElement("li");
-          li.textContent = `${data.name} (${data.email})`;
+          li.innerHTML = `${data.name} — <a href="${data.linkedin}" target="_blank">LinkedIn</a>`;
           userList.appendChild(li);
         });
       });
     }
 
-    // ✅ Download All Entries as .txt
     function downloadAll() {
       db.once("value", (snapshot) => {
         let allText = "";
         snapshot.forEach((child) => {
           const data = child.val();
-          allText += `Name: ${data.name}\nEmail: ${data.email}\nTimestamp: ${data.timestamp}\n\n---\n\n`;
+          allText += `Name: ${data.name}\nLinkedIn: ${data.linkedin}\nTimestamp: ${data.timestamp}\n\n---\n\n`;
         });
 
         const blob = new Blob([allText], { type: "text/plain" });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "all_submissions.txt";
+        a.download = "linkedin_submissions.txt";
         a.click();
       });
     }
 
-    // ✅ Load on Page Start
     window.onload = loadUsers;
   </script>
 </body>
