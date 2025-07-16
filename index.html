@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>IAAS 2025 - LinkedIn</title>
+  <title>IAAS 2025 - Interests Form</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { box-sizing: border-box; }
@@ -44,7 +44,7 @@
       font-size: 14px;
     }
 
-    input, button {
+    input, select, button {
       width: 100%;
       margin-bottom: 12px;
       padding: 8px;
@@ -69,15 +69,6 @@
       margin-bottom: 6px;
     }
 
-    a {
-      color: #000080;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
     @media (min-width: 768px) {
       body {
         flex-direction: row;
@@ -85,61 +76,38 @@
         gap: 20px;
       }
     }
-
-    .xp-marquee-container {
-      width: 100%;
-      background-color: #c0c0c0;
-      border-top: 2px solid #ffffff;
-      border-left: 2px solid #ffffff;
-      border-bottom: 2px solid #000000;
-      border-right: 2px solid #000000;
-      box-shadow: inset 1px 1px #ffffff, inset -1px -1px #808080;
-      padding: 5px;
-      position: fixed;
-      top: 0;
-      z-index: 9999;
-      overflow: hidden;
-    }
-
-    .xp-marquee-text {
-      display: inline-block;
-      white-space: nowrap;
-      color: #000080;
-      font-weight: bold;
-      font-size: 14px;
-      animation: scroll-left 20s linear infinite;
-    }
-
-    @keyframes scroll-left {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
   </style>
 </head>
 <body>
 
-  <!--<div class="xp-marquee-container">
-    <div class="xp-marquee-text">  
-      🚫 This is not a Google Form – it’s specially made for <b>IAAS Adventure</b> by <b>Jashanpreet Singh</b> 💻
-      Subscribe to B. PAIN Music on Youtube 😘 
-    </div>
-  </div>-->
-
-  <br><br>
-
-  <!-- Firebase Compat SDK -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <div class="window">
-    <div class="title-bar">IAAS, IIST - 2025 - LinkedIn</div>
+    <div class="title-bar">IAAS 2025 - Submit Interest</div>
     <div class="window-body">
       <form id="submitForm">
         <label for="name">Name:</label>
         <input type="text" id="name" required>
 
-        <label for="linkedin">LinkedIn Profile URL:</label>
-        <input type="url" id="linkedin" placeholder="https://www.linkedin.com/in/yourname" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+
+        <label for="interest">Interest:</label>
+        <select id="interest" required>
+          <option value="">-- Select --</option>
+          <option>Nuclear Physics</option>
+          <option>Thermal Physics</option>
+          <option>Quantum Physics</option>
+          <option>Theoretical Physics</option>
+          <option>Material Science</option>
+          <option>Semiconductors</option>
+          <option>Astronomy</option>
+          <option>Computational Astronomy</option>
+          <option>Cosmology</option>
+          <option>Don't know yet</option>
+        </select>
 
         <button type="submit">Submit</button>
         <div id="message"></div>
@@ -167,7 +135,7 @@
     };
 
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database().ref("linkedin_profiles");
+    const db = firebase.database().ref("interest_profiles");
 
     const form = document.getElementById("submitForm");
     const message = document.getElementById("message");
@@ -176,9 +144,10 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("name").value.trim();
-      const linkedin = document.getElementById("linkedin").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const interest = document.getElementById("interest").value;
 
-      if (!name || !linkedin) {
+      if (!name || !email || !interest) {
         message.style.color = "red";
         message.textContent = "Please fill in all fields.";
         return;
@@ -186,7 +155,8 @@
 
       const entry = {
         name,
-        linkedin,
+        email,
+        interest,
         timestamp: new Date().toISOString()
       };
 
@@ -209,7 +179,7 @@
         snapshot.forEach((child) => {
           const data = child.val();
           const li = document.createElement("li");
-          li.innerHTML = `${data.name} — <a href="${data.linkedin}" target="_blank">LinkedIn</a>`;
+          li.textContent = `${data.name} — ${data.interest} — ${data.email}`;
           userList.appendChild(li);
         });
       });
@@ -220,13 +190,13 @@
         let allText = "";
         snapshot.forEach((child) => {
           const data = child.val();
-          allText += `Name: ${data.name}\nLinkedIn: ${data.linkedin}\nTimestamp: ${data.timestamp}\n\n---\n\n`;
+          allText += `Name: ${data.name}\nEmail: ${data.email}\nInterest: ${data.interest}\nTimestamp: ${data.timestamp}\n\n---\n\n`;
         });
 
         const blob = new Blob([allText], { type: "text/plain" });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "linkedin_submissions.txt";
+        a.download = "interest_submissions.txt";
         a.click();
       });
     }
