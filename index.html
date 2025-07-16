@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>IAAS 2025 - Interests Form</title>
+  <title>GNDU 2025 - Interests Form</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { box-sizing: border-box; }
@@ -53,6 +53,10 @@
       border-radius: 2px;
     }
 
+    #otherInterestContainer {
+      display: none;
+    }
+
     #message {
       font-size: 13px;
       margin-top: 4px;
@@ -85,7 +89,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <div class="window">
-    <div class="title-bar">GNDU Physics Department 2025 BSC 1 Year - Submit Interest</div>
+    <div class="title-bar">GNDU 2025 Undergrades - Submit Interest</div>
     <div class="window-body">
       <form id="submitForm">
         <label for="name">Name:</label>
@@ -107,7 +111,13 @@
           <option>Computational Astronomy</option>
           <option>Cosmology</option>
           <option>Don't know yet</option>
+          <option value="Other">Other</option>
         </select>
+
+        <div id="otherInterestContainer">
+          <label for="otherInterest">Please specify:</label>
+          <input type="text" id="otherInterest">
+        </div>
 
         <button type="submit">Submit</button>
         <div id="message"></div>
@@ -140,12 +150,31 @@
     const form = document.getElementById("submitForm");
     const message = document.getElementById("message");
     const userList = document.getElementById("userList");
+    const interestSelect = document.getElementById("interest");
+    const otherInterestContainer = document.getElementById("otherInterestContainer");
+    const otherInterestInput = document.getElementById("otherInterest");
+
+    // Show/hide custom interest input
+    interestSelect.addEventListener("change", () => {
+      if (interestSelect.value === "Other") {
+        otherInterestContainer.style.display = "block";
+        otherInterestInput.required = true;
+      } else {
+        otherInterestContainer.style.display = "none";
+        otherInterestInput.required = false;
+        otherInterestInput.value = "";
+      }
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
-      const interest = document.getElementById("interest").value;
+      let interest = interestSelect.value;
+
+      if (interest === "Other") {
+        interest = otherInterestInput.value.trim();
+      }
 
       if (!name || !email || !interest) {
         message.style.color = "red";
@@ -165,6 +194,7 @@
         message.style.color = "green";
         message.textContent = "✅ Submitted successfully!";
         form.reset();
+        otherInterestContainer.style.display = "none";
         loadUsers();
       } catch (error) {
         console.error("Error saving to database:", error);
